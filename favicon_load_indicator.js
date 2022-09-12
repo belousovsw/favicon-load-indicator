@@ -1,5 +1,5 @@
 let favicon_loader = {
-    loader_is_active: false,
+    count_loader_starts: 0,
     timer_loader: false,
     timer_wait_return_to_tab: false,
     animate_speed: 150,
@@ -42,19 +42,20 @@ let favicon_loader = {
     },
 
     startFaviconLoader() {
-        if (this.loader_is_active) {
+        if (this.count_loader_starts++ > 0) {
             return;
         }
         clearInterval(this.timer_wait_return_to_tab);
         this.preview_favicon_path = document.querySelector("link[rel*='icon']").href;
         this.timer_loader = setInterval((favicon_loader) => {
-            favicon_loader.loader_is_active = true;
             favicon_loader.rotateFaviconB64(favicon_loader.loading_file);
         }, this.animate_speed, this)
     },
 
     stopFaviconLoader() {
-        this.loader_is_active = false;
+        if (--this.count_loader_starts > 0) {
+            return;
+        }
         clearInterval(this.timer_loader);
 
         if (document.hidden) {
